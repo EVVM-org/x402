@@ -1,0 +1,16 @@
+{
+  "name": "@evvm/x402",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@evvm/evvm-js": "^0.1.26",
+    "@x402/core": "^2.6.0",
+    "viem": "^2.47.2"
+  }
+}
