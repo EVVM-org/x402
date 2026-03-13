@@ -32,7 +32,7 @@ const handleWebResponse = async (res: ExpressResponse, webRes: Response) => {
 /**
  * ExpressJS middleware that expects EVVM payments
  */
-export const requireEvvmPayment =
+export const requireEvvmPaymentExpress =
   (facilitator: IFacilitator, offers: IEvvmSchema[]) =>
   async (req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
     // assert payment is present

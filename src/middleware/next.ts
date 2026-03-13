@@ -31,7 +31,7 @@ const parseHeaderEdge = (
 /**
  * Creates a payment required middleware for nextjs
  */
-export const createEvvmMiddleware =
+export const createEvvmMiddlewareNext =
   (facilitator: IFacilitator, offers: IEvvmSchema[]) =>
   async (req: NextRequest) => {
     const paymentHeader = req.headers.get("PAYMENT-SIGNATURE");
@@ -76,4 +76,4 @@ export const createEvvmMiddleware =
     req.headers.set("PAYMENT-RESPONSE", base64Payload);
   };
 
-export default createEvvmMiddleware;
+export default createEvvmMiddlewareNext;

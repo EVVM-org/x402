@@ -63,7 +63,7 @@ export const offers: IEvvmSchema[] = [
 
 ```typescript
 // src/index.ts
-import { requireEvvmPayment } from "@evvm/x402";
+import { requireEvvmPaymentExpress } from "@evvm/x402";
 import { facilitator } from "./facilitator";
 import { offers } from "./offers";
 import express from "express";
@@ -72,7 +72,7 @@ const app = express();
 
 app.get(
   "/api/protected",
-  requireEvvmPayment(facilitator, offers),
+  requireEvvmPaymentExpress(facilitator, offers),
   (req, res) => {
     res.json({ message: "Hello, paid user!" });
   },
@@ -86,13 +86,13 @@ app.get(
 The Express middleware validates incoming payment headers and settles payments before passing requests to your route handlers.
 
 ```typescript
-import { requireEvvmPayment } from "@evvm/x402";
+import { requireEvvmPaymentExpress } from "@evvm/x402";
 import { facilitator } from "./facilitator";
 import { offers } from "./offers";
 
 const app = express();
 
-app.get("/api/secure", requireEvvmPayment(facilitator, offers), (req, res) => {
+app.get("/api/secure", requireEvvmPaymentExpress(facilitator, offers), (req, res) => {
   // Payment was verified and settled
   res.json({ data: "Access granted" });
 });
@@ -113,11 +113,11 @@ The Next.js middleware works with Next.js 15+ App Router:
 
 ```typescript
 // middleware.ts
-import { createEvvmMiddleware } from "@evvm/x402";
+import { createEvvmMiddlewareNext } from "@evvm/x402";
 import { facilitator } from "./facilitator";
 import { offers } from "./offers";
 
-export default createEvvmMiddleware(facilitator, offers);
+export default createEvvmMiddlewareNext(facilitator, offers);
 
 export const config = {
   matcher: "/api/:path*",
@@ -206,8 +206,8 @@ The middleware adds the following headers:
 
 ### Middlewares
 
-- `requireEvvmPayment(facilitator, offers)` - Express.js middleware
-- `createEvvmMiddleware(facilitator, offers)` - Next.js middleware factory
+- `requireEvvmPaymentExpress(facilitator, offers)` - Express.js middleware
+- `createEvvmMiddlewareNext(facilitator, offers)` - Next.js middleware factory
 
 ### Utilities
 
