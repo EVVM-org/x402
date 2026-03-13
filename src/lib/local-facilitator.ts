@@ -7,8 +7,9 @@ import {
   type ISigner,
 } from "@evvm/evvm-js";
 import { recoverMessageAddress } from "viem";
+import type { IFacilitator } from "../types";
 
-export class Facilitator {
+export class LocalFacilitator implements IFacilitator {
   constructor(public signer: ISigner) {}
 
   /**
@@ -16,7 +17,9 @@ export class Facilitator {
    * to validate it. Asserts the nonce provided is valid.
    * @returns true if the recovered address match signedAction.data.from; false otherwise
    */
-  async verifyPaySignature(signedAction: ISerializableSignedAction<IPayData>): Promise<boolean> {
+  async verifyPaySignature(
+    signedAction: ISerializableSignedAction<IPayData>,
+  ): Promise<boolean> {
     if (signedAction.functionName !== "pay")
       throw new Error("verifyPaySignature can only verify core.pay signatures");
 

@@ -1,7 +1,5 @@
 import { type SettleResponse } from "@x402/core/types";
 import { type PaymentRequirementsV2 } from "@x402/core/schemas";
-import type { HexString } from "@evvm/evvm-js";
-import type { IPaymentPayload } from "../types/payment-payload.type";
 
 /**
  * Creates the 402 payment required response, with headers, amounts and

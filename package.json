@@ -3,14 +3,16 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@evvm/evvm-js": "^0.1.26",
+    "@evvm/evvm-js": "0.1.27",
     "@x402/core": "^2.6.0",
-    "viem": "^2.47.2"
+    "viem": "^2.47.2",
+    "zod": "^4.3.6"
   }
 }
