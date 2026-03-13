@@ -4,10 +4,17 @@
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "next": "^15.0.0",
+    "typescript": "^5"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "next": ">=15"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@evvm/evvm-js": "0.1.27",
