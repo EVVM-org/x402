@@ -5,21 +5,13 @@ A TypeScript library for integrating [EVVM](https://evvm.org) payments into Node
 ## Installation
 
 ```bash
-npm install @evvm/x402
+npm install @evvm/x402 @evvm/evvm-js
 ```
 
 or with bun:
 
 ```bash
-bun add @evvm/x402
-```
-
-## Peer Dependencies
-
-This package requires Next.js (>=15) as a peer dependency when using the Next.js middleware:
-
-```bash
-npm install next@>=15
+bun add @evvm/x402 @evvm/evvm-js
 ```
 
 ## Setup
@@ -59,26 +51,6 @@ export const offers: IEvvmSchema[] = [
 ];
 ```
 
-## Quick Start
-
-```typescript
-// src/index.ts
-import { requireEvvmPaymentExpress } from "@evvm/x402";
-import { facilitator } from "./facilitator";
-import { offers } from "./offers";
-import express from "express";
-
-const app = express();
-
-app.get(
-  "/api/protected",
-  requireEvvmPaymentExpress(facilitator, offers),
-  (req, res) => {
-    res.json({ message: "Hello, paid user!" });
-  },
-);
-```
-
 ## Middlewares
 
 ### Express.js
@@ -92,10 +64,14 @@ import { offers } from "./offers";
 
 const app = express();
 
-app.get("/api/secure", requireEvvmPaymentExpress(facilitator, offers), (req, res) => {
-  // Payment was verified and settled
-  res.json({ data: "Access granted" });
-});
+app.get(
+  "/api/secure",
+  requireEvvmPaymentExpress(facilitator, offers),
+  (req, res) => {
+    // Payment was verified and settled
+    res.json({ data: "Access granted" });
+  },
+);
 ```
 
 #### How it works:

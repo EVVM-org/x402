@@ -1,0 +1,115 @@
+name: Publish to npm and Create Release
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write # Required for OIDC trusted publishing
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changes: ${{ steps.changes.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: oven-sh/setup-bun@v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Get commit messages since last tag
+        id: changes
+        run: |
+          # Get the last tag
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$last_tag" ]; then
+            # If no tags exist, get all commits
+            changes=$(git log --oneline --pretty=format:"- %s" HEAD)
+          else
+            # Get commits since last tag
+            changes=$(git log --oneline --pretty=format:"- %s" ${last_tag}..HEAD)
+          fi
+
+          # Save changes to output, handling multiline
+          echo "changes<<EOF" >> $GITHUB_OUTPUT
+          echo "$changes" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Determine version bump type
+        id: bump-type
+        run: |
+          # Get commit messages since last tag
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$last_tag" ]; then
+            commits=$(git log --oneline --pretty=format:"%s" HEAD)
+          else
+            commits=$(git log --oneline --pretty=format:"%s" ${last_tag}..HEAD)
+          fi
+
+          # Check for MAJOR: prefix
+          if echo "$commits" | grep -q "^MAJOR:"; then
+            echo "bump_type=major" >> $GITHUB_OUTPUT
+          # Check for MINOR: prefix
+          elif echo "$commits" | grep -q "^MINOR:"; then
+            echo "bump_type=minor" >> $GITHUB_OUTPUT
+          # Default to patch for all other commit types
+          else
+            echo "bump_type=patch" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version
+        id: version
+        run: |
+          # Bump version based on commit type
+          new_version=$(npm version ${{ steps.bump-type.outputs.bump_type }} --no-git-tag-version)
+          echo "version=${new_version}" >> $GITHUB_OUTPUT
+
+      - name: Commit version change
+        run: |
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git push origin main
+
+      - run: npm publish --access public --provenance
+        # The --provenance flag adds automatic attestation for better security
+
+      - name: Create Git Tag
+        run: |
+          git tag ${{ steps.version.outputs.version }}
+          git push origin ${{ steps.version.outputs.version }}
+
+      - name: Create GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: "Release ${{ steps.version.outputs.version }}"
+          body: |
+            Auto-generated release for version ${{ steps.version.outputs.version }}
+
+            ## Changes:
+
+            ${{ steps.changes.outputs.changes }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

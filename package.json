@@ -1,12 +1,65 @@
 {
   "name": "@evvm/x402",
-  "version": "0.0.1",
   "module": "index.ts",
   "type": "module",
+  "version": "0.0.1",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.browser.mjs",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "browser": {
+    "./dist/index.mjs": "./dist/index.browser.mjs",
+    "node:crypto": "crypto-browserify"
+  },
+  "files": [
+    "dist/**/*.cjs",
+    "dist/**/*.d.ts",
+    "dist/**/*.mjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EVVM-org/x402.git"
+  },
+  "license": "EVVM-NONCOMMERCIAL-1.0",
+  "keywords": [
+    "evvm",
+    "blockchain",
+    "ethereum",
+    "web3",
+    "sdk",
+    "x402",
+    "typescript",
+    "viem",
+    "eip-191",
+    "crypto",
+    "defi"
+  ],
+  "bugs": {
+    "url": "https://github.com/EVVM-org/x402/issues"
+  },
+  "homepage": "https://github.com/EVVM-org/x402#readme",
+  "scripts": {
+    "test": "bun test",
+    "clean": "rm -rf dist",
+    "build": "bun run clean && bun run build:types && bun run build:cjs && bun run build:esm && bun run build:browser",
+    "build:cjs": "bun build src/index.ts --minify --target=node --outfile=dist/index.cjs --format=cjs",
+    "build:esm": "bun build src/index.ts --minify --target=node --outfile=dist/index.mjs --format=esm",
+    "build:browser": "bun build src/index.ts --minify --target=browser --outfile=dist/index.browser.mjs --format=esm",
+    "build:types": "tsc --project tsconfig.types.json && tsc-alias",
+    "prepublishOnly": "bun run build"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/express": "^5.0.6",
     "next": "^15.0.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5"
   },
   "peerDependencies": {

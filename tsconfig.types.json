@@ -25,7 +25,7 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src/index.ts"],
   "exclude": ["src/__test__"]
 }
 
