@@ -1,6 +1,8 @@
 import {
   Core,
   execute,
+  getSerializableSignedActionSchema,
+  PayDataSchema,
   type HexString,
   type IPayData,
   type ISerializableSignedAction,
@@ -22,6 +24,14 @@ export class LocalFacilitator implements IFacilitator {
   ): Promise<boolean> {
     if (signedAction.functionName !== "pay")
       throw new Error("verifyPaySignature can only verify core.pay signatures");
+
+    const { success, error } =
+      getSerializableSignedActionSchema(PayDataSchema).safeParse(signedAction);
+
+    if (!success)
+      throw new Error(
+        `The provided signedAction is not valid: ${error.message}`,
+      );
 
     const core = new Core({
       address: signedAction.contractAddress as HexString,
