@@ -11,6 +11,9 @@ import {
 import { recoverMessageAddress } from "viem";
 import type { IFacilitator } from "../types";
 
+/**
+ * Facilitator used to verify and settle EVVM payments
+ */
 export class LocalFacilitator implements IFacilitator {
   constructor(public signer: ISigner) {}
 
