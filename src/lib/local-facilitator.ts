@@ -23,13 +23,18 @@ export class LocalFacilitator implements IFacilitator {
    * @returns true if the recovered address match signedAction.data.from; false otherwise
    */
   async verifyPaySignature(
-    signedAction: ISerializableSignedAction<IPayData>,
-  ): Promise<boolean> {
-    if (signedAction.functionName !== "pay")
+    serializedSignedAction: ISerializableSignedAction<IPayData>,
+  ): Promise<{ success: boolean; error?: string }> {
+    if (serializedSignedAction.functionName !== "pay")
       throw new Error("verifyPaySignature can only verify core.pay signatures");
 
-    const { success, error } =
-      getSerializableSignedActionSchema(PayDataSchema).safeParse(signedAction);
+    const {
+      success,
+      data: signedAction,
+      error,
+    } = getSerializableSignedActionSchema(PayDataSchema).safeParse(
+      serializedSignedAction,
+    );
 
     if (!success)
       throw new Error(
@@ -41,6 +46,7 @@ export class LocalFacilitator implements IFacilitator {
       signer: this.signer,
       chainId: signedAction.chainId,
     });
+
     // replicate signed message
     const evvmId = await core.getEvvmID();
     const hashPayload = core.buildHashPayload(signedAction.functionName, {
@@ -56,7 +62,7 @@ export class LocalFacilitator implements IFacilitator {
       signedAction.data.senderExecutor,
       hashPayload,
       signedAction.data.originExecutor,
-      signedAction.data.nonce,
+      BigInt(signedAction.data.nonce),
       signedAction.data.isAsyncExec,
     );
 
@@ -67,23 +73,31 @@ export class LocalFacilitator implements IFacilitator {
     });
 
     if (address !== signedAction.data.from) {
-      console.error("Couldn't recover address from signature");
-      return false;
+      return {
+        success: false,
+        error: "Couldn't recover address from signature",
+      };
     }
 
     // verify nonces are ok
     if (signedAction.data.isAsyncExec) {
       // async execution, assert nonce hasn't been used before
-      const used = await core.getIfUsedAsyncNonce(signedAction.data.nonce);
+      const used = await core.getIfUsedAsyncNonce(
+        BigInt(signedAction.data.nonce),
+      );
       if (used) {
-        console.error("Invalid async nonce");
-        return false;
+        return {
+          success: false,
+          error: "Invalid async nonce",
+        };
       }
     } else {
       const nextExpectedNonce = await core.getNextCurrentSyncNonce();
       if (nextExpectedNonce.toString() != signedAction.data.nonce.toString()) {
-        console.error("Invalid sync nonce");
-        return false;
+        return {
+          success: false,
+          error: "Invalid sync nonce",
+        };
       }
     }
 
@@ -92,12 +106,14 @@ export class LocalFacilitator implements IFacilitator {
       signedAction.data.from,
       signedAction.data.token,
     );
-    if (balance <= signedAction.data.amount) {
-      console.error("Insufficient balance");
-      return false;
+    if (balance <= BigInt(signedAction.data.amount)) {
+      return {
+        success: false,
+        error: "Insufficient balance",
+      };
     }
 
-    return true;
+    return { success: true };
   }
 
   /**
@@ -105,10 +121,10 @@ export class LocalFacilitator implements IFacilitator {
    * @returns tx hash
    */
   async settlePayment(
-    signedAction: ISerializableSignedAction<IPayData>,
+    serializedSignedAction: ISerializableSignedAction<IPayData>,
   ): Promise<HexString | null> {
     try {
-      const txHash = await execute(this.signer, signedAction);
+      const txHash = await execute(this.signer, serializedSignedAction);
       return txHash;
     } catch (error) {
       console.error("Failed to settle payment");

@@ -7,7 +7,7 @@ import type {
 export interface IFacilitator {
   verifyPaySignature(
     signedAction: ISerializableSignedAction<IPayData>,
-  ): Promise<boolean>;
+  ): Promise<{ success: boolean; error?: string }>;
 
   settlePayment(
     signedAction: ISerializableSignedAction<IPayData>,

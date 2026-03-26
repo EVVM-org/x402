@@ -5,7 +5,7 @@
     "": {
       "name": "@evvm/x402",
       "dependencies": {
-        "@evvm/evvm-js": "0.1.27",
+        "@evvm/evvm-js": "^0.1.31",
         "@x402/core": "^2.6.0",
         "viem": "^2.47.2",
         "zod": "^4.3.6",
@@ -30,7 +30,7 @@
 
     "@emnapi/runtime": ["@emnapi/runtime@1.9.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-QN75eB0IH2ywSpRpNddCRfQIhmJYBCJ1x5Lb3IscKAL8bMnVAKnRg8dCoXbHzVLLH7P38N2Z3mtulB7W0J0FKw=="],
 
-    "@evvm/evvm-js": ["@evvm/evvm-js@0.1.27", "", { "dependencies": { "crypto-browserify": "^3.12.1", "ethers": "^6.16.0", "viem": "2.45.0", "zod": "^4.3.6" }, "peerDependencies": { "typescript": "^5" } }, "sha512-F/lE/UeWfEKQzROmWh3jByPwRNimwzEi+a64ZiK7QE02pGpP8FHkDW1bbazfLPD/6iAjg45EApi+6PyvpzRXrw=="],
+    "@evvm/evvm-js": ["@evvm/evvm-js@0.1.31", "", { "dependencies": { "crypto-browserify": "^3.12.1", "ethers": "^6.16.0", "viem": "2.45.0", "zod": "^4.3.6" }, "peerDependencies": { "typescript": "^5" } }, "sha512-ws7wO9mi+/Gexqqzmyjgy0S4TimB5vjjtT8j39MmJmWgqVBNUgWyUXF+AUI8cTiRGKiYSTtrgvrAN1EgLI39WQ=="],
 
     "@img/colour": ["@img/colour@1.1.0", "", {}, "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ=="],
 
