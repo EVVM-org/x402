@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import type { IEvvmSchema, IFacilitator } from "../types";
 import { invalidPaymentResponse, paymentRequiredResponse } from "../lib";
 import {
@@ -53,8 +54,9 @@ export const createEvvmMiddlewareNext =
       return invalidPaymentResponse("Not an evvm payment");
     }
 
-    if (!(await facilitator.verifyPaySignature(signedAction))) {
-      return invalidPaymentResponse("Invalid signature");
+    const verifyResult = await facilitator.verifyPaySignature(signedAction);
+    if (!verifyResult.success) {
+      return invalidPaymentResponse(verifyResult.error || "Invalid signature");
     }
 
     const txHash = await facilitator.settlePayment(signedAction);
@@ -73,7 +75,16 @@ export const createEvvmMiddlewareNext =
     const jsonString = JSON.stringify(settleResponse);
     const base64Payload = btoa(jsonString);
 
-    req.headers.set("PAYMENT-RESPONSE", base64Payload);
+    // Clone the request and add the header - route handlers receive a new request
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("PAYMENT-RESPONSE", base64Payload);
+
+    // Pass through to the route handler with modified headers
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   };
 
 export default createEvvmMiddlewareNext;

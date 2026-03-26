@@ -59,10 +59,11 @@ export const requireEvvmPaymentExpress =
     }
 
     // verify it
-    if (!(await facilitator.verifyPaySignature(signedAction))) {
+    const verifyResult = await facilitator.verifyPaySignature(signedAction);
+    if (!verifyResult.success) {
       return handleWebResponse(
         res,
-        invalidPaymentResponse("Invalid signature"),
+        invalidPaymentResponse(verifyResult.error || "Invalid signature"),
       );
     }
 

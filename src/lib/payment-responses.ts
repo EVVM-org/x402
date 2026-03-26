@@ -14,11 +14,9 @@ export const paymentRequiredResponse = (
 
   const headers = new Headers();
   headers.set("PAYMENT-REQUIRED", base64Payload);
-  headers.set("Access-Control-Expose-Headers", "PAYMENT-REQUIRED"); // Vital for CORS
+  headers.set("Access-Control-Expose-Headers", "PAYMENT-REQUIRED");
   headers.set("Content-Type", "application/json");
-  headers.set("connection", "keep-alive"); //todo
-
-  console.log("Payment required");
+  headers.set("connection", "keep-alive");
 
   return new Response("Payment Required", { headers, status: 402 });
 };
@@ -41,7 +39,6 @@ export const invalidPaymentResponse = (reason: string): Response => {
   const headers = new Headers();
   headers.set("PAYMENT-RESPONSE", base64Payload);
 
-  console.log("Payment invalid");
   return new Response(`Payment Invalid: ${reason}`, { status: 400, headers });
 };
 
