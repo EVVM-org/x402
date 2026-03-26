@@ -16,6 +16,7 @@ export const paymentRequiredResponse = (
   headers.set("PAYMENT-REQUIRED", base64Payload);
   headers.set("Access-Control-Expose-Headers", "PAYMENT-REQUIRED"); // Vital for CORS
   headers.set("Content-Type", "application/json");
+  headers.set("connection", "keep-alive"); //todo
 
   console.log("Payment required");
 
